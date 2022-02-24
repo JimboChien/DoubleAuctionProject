@@ -1,9 +1,7 @@
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
-public class main {
+public class mainTest {
     public static void main(String[] args) throws IOException {
 
         /************************
@@ -54,7 +52,7 @@ public class main {
         List<Point> traditionalBuyerDemand = dataProcessing.traditionalBuyerDemand(dataGenerator.getGridPrice());
         
         // Print Chart Point Result
-        System.out.println();
+        // System.out.println();
         // for (int i = 0; i < traditionalSellerSupply.size(); i++) {
         //     System.out.println("X: " + traditionalSellerSupply.get(i).getX() + "\t\tY: " + traditionalSellerSupply.get(i).getY());
         // }
@@ -66,9 +64,43 @@ public class main {
         /************************
          * Draw Chart
          ************************/
-
+        
+        System.out.println();
+        System.out.println("===============================");
+        System.out.println("|  Draw Chart & Save to Image |");
+        System.out.println("===============================\n");
         DrawChart drawChart = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand);
-        drawChart.draw();
+
+        double ceil;
+        double floor;
+        
+        if (traditionalSellerSupply.get(traditionalSellerSupply.size() - 2).getY() > traditionalBuyerDemand.get(1).getY()) {
+            ceil = traditionalSellerSupply.get(traditionalSellerSupply.size() - 2).getY();
+        } else {
+            ceil = traditionalBuyerDemand.get(1).getY();
+        }
+        
+        if (traditionalSellerSupply.get(1).getY() < traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 2).getY()) {
+            floor = traditionalSellerSupply.get(1).getY();
+        } else {
+            floor = traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 2).getY();
+        }
+        
+        drawChart.draw("Traditional_Supply_n_Demand_LineChart", floor, ceil);
+        
+        System.out.println();
+        System.out.println("==============================");
+        System.out.println("|      Find Equilibrium      |");
+        System.out.println("==============================\n");
+        
+        Point intersectPoint = drawChart.getIntersectPoint();
+        System.out.println("Equilibrium Point: \tPoint(" + intersectPoint.getX() + ", " + intersectPoint.getY() + ")");
+
+        System.out.println();
+        System.out.println("==============================");
+        System.out.println("|      Calculate Profit      |");
+        System.out.println("==============================\n");
+        System.out.println("Traditional Profit: " + drawChart.getTraditionalProfit(intersectPoint));
 
         System.out.println("\n\n[+] Mission Completed !!!\n");
     }
