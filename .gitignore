@@ -1,2 +1,2 @@
-output/*.jpeg
+output
 !output/
