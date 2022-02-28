@@ -25,41 +25,40 @@ public class DrawChart {
     }
 
     public void draw(String saveFileName, double xFloor, double xCeil) throws IOException {
-        
+
         System.out.println("Save Chart \"" + saveFileName + "\" to output Folder......");
 
         // Supply
-        XYSeries supply = new XYSeries( "Supply" );
+        XYSeries supply = new XYSeries("Supply");
         for (int i = 0; i < sellerSupply.size(); i++) {
             supply.add(sellerSupply.get(i).getX(), sellerSupply.get(i).getY());
         }
-        
+
         // Demand
-        XYSeries demand = new XYSeries( "Demand" );
+        XYSeries demand = new XYSeries("Demand");
         for (int i = 0; i < buyerDemand.size(); i++) {
             demand.add(buyerDemand.get(i).getX(), buyerDemand.get(i).getY());
         }
-        
+
         final XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries( supply );
-        dataset.addSeries( demand );
+        dataset.addSeries(supply);
+        dataset.addSeries(demand);
 
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
-            "Traditional Supply and Demand", 
-            "Quantity",
-            "Price", 
-            dataset,
-            PlotOrientation.VERTICAL, 
-            true, true, false);
-      
-         
+                "Traditional Supply and Demand",
+                "Quantity",
+                "Price",
+                dataset,
+                PlotOrientation.VERTICAL,
+                true, true, false);
+
         XYPlot xyPlot = (XYPlot) xylineChart.getPlot();
         xyPlot.setDomainCrosshairVisible(true);
         xyPlot.setRangeCrosshairVisible(true);
         XYItemRenderer renderer = xyPlot.getRenderer();
         renderer.setSeriesPaint(0, Color.blue);
         renderer.setSeriesPaint(1, Color.red);
-        
+
         // Change Y-Axis Range
         // NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
         // domain.setRange(0.00, 1.00);
@@ -70,24 +69,40 @@ public class DrawChart {
         NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
         range.setRange(xFloor - 0.2, xCeil + 0.2);
         range.setTickUnit(new NumberTickUnit(1));
-         
+
         // Save Chart to Image
         int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */ 
-        File XYChart = new File( "./output/" + saveFileName + ".jpeg" ); 
-        ChartUtils.saveChartAsJPEG( XYChart, xylineChart, width, height);
-        
+        int height = 480; /* Height of the image */
+
+        String outputDirectory = "./output";
+        File directory = new File(outputDirectory);
+        if (!directory.exists()) {
+            System.out.println("新建 output 資料夾中...");
+            directory.mkdir();
+            // If you require it to make the entire directory path including parents,
+            // use directory.mkdirs(); here instead.
+        }
+
+        File XYChart = new File("./output/" + saveFileName + ".jpeg");
+        ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
+
         System.out.println("Done !!!");
-    }   
-    
+    }
+
     public Point getIntersectPoint() {
         boolean intersected;
         for (int i = 0; i < sellerSupply.size() - 1; i++) {
-            for (int j = 0; j < buyerDemand.size() - 1; j++){
-                intersected = intersectCheck(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j), buyerDemand.get(j + 1));
-                if(intersected) {
-                    System.out.println("Find Instersected:\n\tSeller Point 1\t(" + sellerSupply.get(i).getX() + ", " + sellerSupply.get(i).getY() + ")\tSeller Point 2\t(" + sellerSupply.get(i + 1).getX() + ", " + sellerSupply.get(i + 1).getY() + ")\n\tBuyer Point 1\t(" + buyerDemand.get(j).getX() + ", " + buyerDemand.get(j).getY() + ")\tBuyer Point 2\t(" + buyerDemand.get(j + 1).getX() + ", " + buyerDemand.get(j + 1).getY() + ")\n");
-                    return intersectPoint(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j), buyerDemand.get(j + 1));
+            for (int j = 0; j < buyerDemand.size() - 1; j++) {
+                intersected = intersectCheck(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j),
+                        buyerDemand.get(j + 1));
+                if (intersected) {
+                    System.out.println("Find Instersected:\n\tSeller Point 1\t(" + sellerSupply.get(i).getX() + ", "
+                            + sellerSupply.get(i).getY() + ")\tSeller Point 2\t(" + sellerSupply.get(i + 1).getX()
+                            + ", " + sellerSupply.get(i + 1).getY() + ")\n\tBuyer Point 1\t("
+                            + buyerDemand.get(j).getX() + ", " + buyerDemand.get(j).getY() + ")\tBuyer Point 2\t("
+                            + buyerDemand.get(j + 1).getX() + ", " + buyerDemand.get(j + 1).getY() + ")\n");
+                    return intersectPoint(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j),
+                            buyerDemand.get(j + 1));
                 }
             }
         }
@@ -98,9 +113,9 @@ public class DrawChart {
 
         // x y 座標是否重疊
         if (Math.max(sellerP1.getX(), sellerP2.getX()) < Math.min(buyerP1.getX(), buyerP2.getX())
-            || Math.max(sellerP1.getY(), sellerP2.getY()) < Math.min(buyerP1.getY(), buyerP2.getY())
-            || Math.max(buyerP1.getX(), buyerP2.getX()) < Math.min(sellerP1.getX(), sellerP2.getY())
-            || Math.max(buyerP1.getY(), buyerP2.getY()) < Math.min(sellerP1.getY(), sellerP2.getY())) {
+                || Math.max(sellerP1.getY(), sellerP2.getY()) < Math.min(buyerP1.getY(), buyerP2.getY())
+                || Math.max(buyerP1.getX(), buyerP2.getX()) < Math.min(sellerP1.getX(), sellerP2.getY())
+                || Math.max(buyerP1.getY(), buyerP2.getY()) < Math.min(sellerP1.getY(), sellerP2.getY())) {
 
             return false;
         }
@@ -111,14 +126,14 @@ public class DrawChart {
         double d = buyerP2.getX() - buyerP1.getX();
         double e = sellerP2.getX() - buyerP1.getX();
         double f = sellerP2.getY() - buyerP1.getY();
-        double g = buyerP1.getX() - sellerP1.getX(); 
+        double g = buyerP1.getX() - sellerP1.getX();
         double h = sellerP2.getY() - sellerP1.getY();
         double i = buyerP1.getY() - sellerP1.getY();
         double j = sellerP2.getX() - sellerP1.getX();
         double k = buyerP2.getX() - sellerP1.getX();
         double l = buyerP2.getY() - sellerP1.getY();
         if (((a * b - c * d) * (e * b - f * d)) > 0
-            || ((g * h - i * j) * (k * h - l * j)) > 0) {
+                || ((g * h - i * j) * (k * h - l * j)) > 0) {
 
             return false;
         }
