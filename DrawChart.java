@@ -3,13 +3,16 @@ import java.io.IOException;
 import java.util.*;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.ChartUtils;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import java.awt.Color;
@@ -18,6 +21,7 @@ public class DrawChart {
 
     private List<Point> sellerSupply = new ArrayList<Point>();
     private List<Point> buyerDemand = new ArrayList<Point>();
+    Point intersectPoint = new Point();
 
     public DrawChart(List<Point> sellerSupply, List<Point> buyerDemand) {
         this.sellerSupply = sellerSupply;
@@ -44,6 +48,12 @@ public class DrawChart {
         dataset.addSeries( supply );
         dataset.addSeries( demand );
 
+        // Find Intersect Point
+        intersectPoint = findIntersectPoint();
+        XYSeries intersect = new XYSeries( "Intersect" );
+        intersect.add(intersectPoint.getX(), intersectPoint.getY());
+        dataset.addSeries(intersect);
+
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
             "Traditional Supply and Demand", 
             "Quantity",
@@ -54,23 +64,41 @@ public class DrawChart {
       
          
         XYPlot xyPlot = (XYPlot) xylineChart.getPlot();
-        xyPlot.setDomainCrosshairVisible(true);
-        xyPlot.setRangeCrosshairVisible(true);
-        XYItemRenderer renderer = xyPlot.getRenderer();
+        XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+        
+        // Setting Supply Line Blue 
+        renderer.setSeriesLinesVisible(0, true);
+        renderer.setSeriesShapesVisible(0, false);
         renderer.setSeriesPaint(0, Color.blue);
+        
+        // Setting Demand Line Red
+        renderer.setSeriesLinesVisible(1, true);
+        renderer.setSeriesShapesVisible(1, false);
         renderer.setSeriesPaint(1, Color.red);
         
-        // Change Y-Axis Range
+        // Setting Intersect Point Location
+        renderer.setSeriesLinesVisible(2, false);
+        renderer.setSeriesShapesVisible(2, true);
+        xyPlot.setRenderer(renderer);
+        
+        // Setting Intersect Point Message
+        XYTextAnnotation annotation = new XYTextAnnotation("(" + intersectPoint.getX() + ", " + intersectPoint.getY() + ")", intersectPoint.getX(), intersectPoint.getY() - 0.1);
+        xyPlot.addAnnotation(annotation);
+
+        xyPlot.setDomainCrosshairVisible(true);
+        xyPlot.setRangeCrosshairVisible(true);
+
+        // Change X-Axis Range
         // NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
         // domain.setRange(0.00, 1.00);
         // domain.setTickUnit(new NumberTickUnit(0.1));
         // domain.setVerticalTickLabels(true);
 
-        // Change X-Axis Range
+        // Change Y-Axis Range
         NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
         range.setRange(xFloor - 0.2, xCeil + 0.2);
         range.setTickUnit(new NumberTickUnit(1));
-         
+        
         // Save Chart to Image
         int width = 640; /* Width of the image */
         int height = 480; /* Height of the image */ 
@@ -80,7 +108,7 @@ public class DrawChart {
         System.out.println("Done !!!");
     }   
     
-    public Point getIntersectPoint() {
+    public Point findIntersectPoint() {
         boolean intersected;
         for (int i = 0; i < sellerSupply.size() - 1; i++) {
             for (int j = 0; j < buyerDemand.size() - 1; j++){
@@ -153,5 +181,9 @@ public class DrawChart {
 
     public double getTraditionalProfit(Point equilibriumPoint) {
         return equilibriumPoint.getX() * equilibriumPoint.getY();
+    }
+
+    public Point getIntersectPoint(){
+        return intersectPoint;
     }
 }

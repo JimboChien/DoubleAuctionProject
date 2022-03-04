@@ -100,7 +100,9 @@ public class mainTest {
         System.out.println("==============================");
         System.out.println("|      Calculate Profit      |");
         System.out.println("==============================\n");
-        System.out.println("Traditional Profit: " + drawChart.getTraditionalProfit(intersectPoint));
+
+        Profit traditionalProfit = new Profit(traditionalSellerSupply, traditionalBuyerDemand);
+        System.out.println("Traditional Profit: " + traditionalProfit.getTraditionalProfit(intersectPoint));
 
         System.out.println("\n\n[+] Mission Completed !!!\n");
     }
