@@ -82,7 +82,7 @@ public class mainTest {
         System.out.println("===============================\n");
         DrawChart drawChartByTraditional = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand);
         DrawChart drawChartByModern = new DrawChart(modernSellerSupply,
-                modernBuyerDemand);
+                traditionalBuyerDemand);
 
         double floor;
         double ceil;

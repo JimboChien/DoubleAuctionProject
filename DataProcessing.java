@@ -111,6 +111,10 @@ public class DataProcessing {
         }
 
         modernBuyerData = new ArrayList<Point>(traditionalBuyerData);
+        Collections.reverse(modernBuyerData);
+        for (int i = 0; i < modernBuyerData.size(); i++) {
+            System.out.println(modernBuyerData.get(i).getX() + "\t" + modernBuyerData.get(i).getY());
+        }
 
     }
 
