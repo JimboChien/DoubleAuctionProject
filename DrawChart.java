@@ -47,13 +47,13 @@ public class DrawChart {
         dataset.addSeries(demand);
 
         // Find Intersect Point
-        intersectPoint = findIntersectPoint();
-        XYSeries intersect = new XYSeries( "Intersect" );
-        intersect.add(intersectPoint.getX(), intersectPoint.getY());
-        dataset.addSeries(intersect);
+        // intersectPoint = findIntersectPoint();
+        // XYSeries intersect = new XYSeries( "Intersect" );
+        // intersect.add(intersectPoint.getX(), intersectPoint.getY());
+        // dataset.addSeries(intersect);
 
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
-                "Traditional Supply and Demand",
+                saveFileName.replace("_", " "),
                 "Quantity",
                 "Price",
                 dataset,
@@ -62,25 +62,27 @@ public class DrawChart {
 
         XYPlot xyPlot = (XYPlot) xylineChart.getPlot();
         XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-        
-        // Setting Supply Line Blue 
+
+        // Setting Supply Line Blue
         renderer.setSeriesLinesVisible(0, true);
         renderer.setSeriesShapesVisible(0, false);
         renderer.setSeriesPaint(0, Color.blue);
-        
+
         // Setting Demand Line Red
         renderer.setSeriesLinesVisible(1, true);
         renderer.setSeriesShapesVisible(1, false);
         renderer.setSeriesPaint(1, Color.red);
-        
+
         // Setting Intersect Point Location
-        renderer.setSeriesLinesVisible(2, false);
-        renderer.setSeriesShapesVisible(2, true);
-        xyPlot.setRenderer(renderer);
-        
+        // renderer.setSeriesLinesVisible(2, false);
+        // renderer.setSeriesShapesVisible(2, true);
+        // xyPlot.setRenderer(renderer);
+
         // Setting Intersect Point Message
-        XYTextAnnotation annotation = new XYTextAnnotation("(" + intersectPoint.getX() + ", " + intersectPoint.getY() + ")", intersectPoint.getX(), intersectPoint.getY() - 0.1);
-        xyPlot.addAnnotation(annotation);
+        // XYTextAnnotation annotation = new XYTextAnnotation("(" +
+        // intersectPoint.getX() + ", " + intersectPoint.getY() + ")",
+        // intersectPoint.getX(), intersectPoint.getY() - 0.1);
+        // xyPlot.addAnnotation(annotation);
 
         xyPlot.setDomainCrosshairVisible(true);
         xyPlot.setRangeCrosshairVisible(true);
@@ -95,7 +97,7 @@ public class DrawChart {
         NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
         range.setRange(xFloor - 0.2, xCeil + 0.2);
         range.setTickUnit(new NumberTickUnit(1));
-        
+
         // Save Chart to Image
         int width = 640; /* Width of the image */
         int height = 480; /* Height of the image */
@@ -113,8 +115,8 @@ public class DrawChart {
         ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
 
         System.out.println("Done !!!");
-    }   
-    
+    }
+
     public Point findIntersectPoint() {
         boolean intersected;
         for (int i = 0; i < sellerSupply.size() - 1; i++) {
@@ -196,7 +198,7 @@ public class DrawChart {
         return equilibriumPoint.getX() * equilibriumPoint.getY();
     }
 
-    public Point getIntersectPoint(){
+    public Point getIntersectPoint() {
         return intersectPoint;
     }
 }
