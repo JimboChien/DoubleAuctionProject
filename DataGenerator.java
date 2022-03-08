@@ -71,7 +71,7 @@ public class DataGenerator {
 
     private double randomValue(double floor, double ceil) {
         double diff = ceil - floor;
-        double result = Math.ceil((floor + r.nextDouble() * diff) * 100) / 100 ;
+        double result = Math.floor((floor + r.nextDouble() * diff) * 100) / 100 ;
 
         return result;
     }

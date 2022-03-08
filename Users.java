@@ -2,26 +2,26 @@ public class Users {
     
     private String role;
     private int roleId;
-    private double amount;
+    private double quantity;
     private double price;
 
-    public Users(String role, int roleId, double amount, double price) {
+    public Users(String role, int roleId, double quantity, double price) {
         this.role = role;
         this.roleId = roleId;
-        this.amount = amount;
+        this.quantity = quantity;
         this.price = price;
     }
 
-    public double getAmount() {
-        return amount;
+    public double getQuantity() {
+        return quantity;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
     }
 
     public void setPrice(double price) {
@@ -29,6 +29,6 @@ public class Users {
     }
 
     public String toString() {
-        return role + roleId + "\tAmount: " + amount + "\tPrice: " + price;
+        return role + roleId + "\tQuantity: " + quantity + "\tPrice: " + price;
     }
 }

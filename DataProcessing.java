@@ -24,20 +24,20 @@ public class DataProcessing {
         this.sellersPriceMap = sellersPriceMap;
         this.buyersPricMap = buyersPricMap;
 
-        ProcessingSellerSupply();
+        ProcessingSellerSupply(ceilPrice);
         ProcessingBuyerDemand(ceilPrice);
     }
 
     // public List<Point> traditionalSellerSupply() {
-    private void ProcessingSellerSupply() {
+    private void ProcessingSellerSupply(double ceilPrice) {
 
         // Sorting by Price
         List<Entry<Integer, Double>> sortingSellersPrice = new ArrayList<>(sellersPriceMap.entrySet());
         sortingSellersPrice.sort(Entry.comparingByValue());
         // System.out.println();
         // sortingSellersPrice.forEach(result -> System.out.println("Key: " +
-        // result.getKey() + "\t\tValue: " + result.getValue() + "\tAmount: " +
-        // originalSeller[result.getKey()].getAmount()));
+        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        // originalSeller[result.getKey()].getQuantity()));
         Point prevTraditional = new Point(0, 0);
         Point prevModern = new Point(0, 0);
 
@@ -55,12 +55,12 @@ public class DataProcessing {
                 prevModern = new Point(prevModern.getX(), prevModern.getY());
             }
             prevTraditional = new Point(
-                    Math.ceil((prevTraditional.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getAmount())
+                    Math.floor((prevTraditional.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
                             * 100)
                             / 100,
                     sortingSellersPrice.get(i).getValue());
             prevModern = new Point(
-                    Math.ceil((prevModern.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getAmount())
+                    Math.floor((prevModern.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
                             * 100)
                             / 100,
                     sortingSellersPrice.get(i).getValue());
@@ -71,6 +71,9 @@ public class DataProcessing {
                 prevModern = new Point(prevModern.getX(), prevModern.getY());
             }
         }
+        // Add Price Extend Line
+        traditionalSellerData.add(new Point(traditionalSellerData.get(traditionalSellerData.size() - 1).getX(), ceilPrice));
+        modernSellerData.add(new Point(modernSellerData.get(modernSellerData.size() - 1).getX(), ceilPrice));
 
         for (int i = 0; i < modernSellerData.size(); i++) {
             modernSellerData.get(i).setX(0 - modernSellerData.get(i).getX());
@@ -86,8 +89,8 @@ public class DataProcessing {
         sortingBuyersPrice.sort(Entry.<Integer, Double>comparingByValue().reversed());
         // System.out.println();
         // sortingBuyersPrice.forEach(result -> System.out.println("Key: " +
-        // result.getKey() + "\t\tValue: " + result.getValue() + "\tAmount: " +
-        // originalBuyers[result.getKey()].getAmount()));
+        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        // originalBuyers[result.getKey()].getQuantity()));
         Point prev = new Point(0, ceilPrice);
 
         // Find Point
@@ -100,7 +103,7 @@ public class DataProcessing {
                 prev = new Point(prev.getX(), prev.getY());
             }
             prev = new Point(
-                    Math.ceil((prev.getX() + originalBuyers[sortingBuyersPrice.get(i).getKey()].getAmount())
+                    Math.floor((prev.getX() + originalBuyers[sortingBuyersPrice.get(i).getKey()].getQuantity())
                             * 100)
                             / 100,
                     sortingBuyersPrice.get(i).getValue());
@@ -110,11 +113,9 @@ public class DataProcessing {
             }
         }
 
+        traditionalBuyerData.add(new Point(traditionalBuyerData.get(traditionalBuyerData.size() -1).getX() , 0));
+
         modernBuyerData = new ArrayList<Point>(traditionalBuyerData);
-        Collections.reverse(modernBuyerData);
-        for (int i = 0; i < modernBuyerData.size(); i++) {
-            System.out.println(modernBuyerData.get(i).getX() + "\t" + modernBuyerData.get(i).getY());
-        }
 
     }
 

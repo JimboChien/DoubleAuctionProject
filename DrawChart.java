@@ -17,29 +17,54 @@ import java.awt.Color;
 
 public class DrawChart {
 
-    private List<Point> sellerSupply = new ArrayList<Point>();
-    private List<Point> buyerDemand = new ArrayList<Point>();
-    Point intersectPoint = new Point();
+    private List<Point> traditionalSellerSupply = new ArrayList<Point>();
+    private List<Point> traditionalBuyerDemand = new ArrayList<Point>();
+    private List<Point> modernSellerSupply = new ArrayList<Point>();
+    private List<Point> modernBuyerDemand = new ArrayList<Point>();
 
-    public DrawChart(List<Point> sellerSupply, List<Point> buyerDemand) {
-        this.sellerSupply = sellerSupply;
-        this.buyerDemand = buyerDemand;
+    Point traditionalIntersectPoint = new Point();
+    Point modernIntersectPoint = new Point();
+
+    public DrawChart(List<Point> traditionalSellerSupply, List<Point> traditionalBuyerDemand, List<Point> modernSellerSupply, List<Point> modernBuyerDemand) {
+        this.traditionalSellerSupply = traditionalSellerSupply;
+        this.traditionalBuyerDemand = traditionalBuyerDemand;
+        this.modernSellerSupply = modernSellerSupply;
+        this.modernBuyerDemand = modernBuyerDemand;
+
     }
 
-    public void draw(String saveFileName, double xFloor, double xCeil) throws IOException {
+    // public void draw(String saveFileName, double floor, double ceil) throws IOException {
+    public void draw( double floor, double ceil, double quantity ) throws IOException {
+        
+        drawAndSaveToFile("Traditional", floor, ceil, quantity);
+        drawAndSaveToFile("Modern", floor, ceil, quantity);
 
-        System.out.println("Save Chart \"" + saveFileName + "\" to output Folder......");
+        System.out.println("Done !!!");
+    }
+
+    private void drawAndSaveToFile(String functionType, double floor, double ceil, double quantity) throws IOException {
+        System.out.println("Save Chart \"" + functionType + "_Supply_and_Demand_LineChart\" to output Folder......");
+
+        List<Point> seller = new ArrayList<Point>();
+        List<Point> buyer = new ArrayList<Point>();
+        if (functionType == "Traditional") {
+            seller = traditionalSellerSupply;
+            buyer = traditionalBuyerDemand;
+        } else if (functionType == "Modern") {
+            seller = modernSellerSupply;
+            buyer = modernBuyerDemand;
+        }
 
         // Supply
         XYSeries supply = new XYSeries("Supply");
-        for (int i = 0; i < sellerSupply.size(); i++) {
-            supply.add(sellerSupply.get(i).getX(), sellerSupply.get(i).getY());
+        for (int i = 0; i < seller.size(); i++) {
+            supply.add(seller.get(i).getX(), seller.get(i).getY());
         }
 
         // Demand
         XYSeries demand = new XYSeries("Demand");
-        for (int i = 0; i < buyerDemand.size(); i++) {
-            demand.add(buyerDemand.get(i).getX(), buyerDemand.get(i).getY());
+        for (int i = 0; i < buyer.size(); i++) {
+            demand.add(buyer.get(i).getX(), buyer.get(i).getY());
         }
 
         final XYSeriesCollection dataset = new XYSeriesCollection();
@@ -47,13 +72,28 @@ public class DrawChart {
         dataset.addSeries(demand);
 
         // Find Intersect Point
-        // intersectPoint = findIntersectPoint();
-        // XYSeries intersect = new XYSeries( "Intersect" );
-        // intersect.add(intersectPoint.getX(), intersectPoint.getY());
-        // dataset.addSeries(intersect);
+        XYSeries intersect = new XYSeries( "Intersect" );
+        XYSeries shifted = new XYSeries( "Shifted" );
+        Point intersectPoint = new Point(0,0);
+        if (functionType == "Traditional") {
+            intersectPoint = findTraditionalIntersectPoint();
+        } else if (functionType == "Modern") {
+            double Qmv =  getQFunction();
+            // Shifted Line
+            Collections.reverse(modernSellerSupply);
+            for (int i = 0; i < modernSellerSupply.size(); i++) {
+                shifted.add(modernSellerSupply.get(i).getX() + Qmv, modernSellerSupply.get(i).getY());
+            }
+        }
+        intersect.add(intersectPoint.getX(), intersectPoint.getY());
+        
+        dataset.addSeries(intersect);
+        if (!shifted.getItems().isEmpty()){
+            dataset.addSeries(shifted);
+        }
 
         JFreeChart xylineChart = ChartFactory.createXYLineChart(
-                saveFileName.replace("_", " "),
+                functionType + " Supply and Demand LineChart",
                 "Quantity",
                 "Price",
                 dataset,
@@ -74,28 +114,34 @@ public class DrawChart {
         renderer.setSeriesPaint(1, Color.red);
 
         // Setting Intersect Point Location
-        // renderer.setSeriesLinesVisible(2, false);
-        // renderer.setSeriesShapesVisible(2, true);
-        // xyPlot.setRenderer(renderer);
+        renderer.setSeriesLinesVisible(2, false);
+        renderer.setSeriesShapesVisible(2, true);
+        xyPlot.setRenderer(renderer);
+        
+        // Setting Shifted Supply Line
+        renderer.setSeriesLinesVisible(3, true);
+        renderer.setSeriesShapesVisible(3, false);
+        renderer.setSeriesPaint(3, Color.blue);
+        
 
         // Setting Intersect Point Message
-        // XYTextAnnotation annotation = new XYTextAnnotation("(" +
-        // intersectPoint.getX() + ", " + intersectPoint.getY() + ")",
-        // intersectPoint.getX(), intersectPoint.getY() - 0.1);
-        // xyPlot.addAnnotation(annotation);
+        XYTextAnnotation annotation = new XYTextAnnotation("(" +
+        intersectPoint.getX() + ", " + intersectPoint.getY() + ")",
+        intersectPoint.getX(), intersectPoint.getY() - 0.1);
+        xyPlot.addAnnotation(annotation);
 
         xyPlot.setDomainCrosshairVisible(true);
         xyPlot.setRangeCrosshairVisible(true);
 
         // Change X-Axis Range
-        // NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
-        // domain.setRange(0.00, 1.00);
-        // domain.setTickUnit(new NumberTickUnit(0.1));
+        NumberAxis domain = (NumberAxis) xyPlot.getDomainAxis();
+        domain.setRange(0 - quantity - 0.2, quantity + 0.2);
+        domain.setTickUnit(new NumberTickUnit(2));
         // domain.setVerticalTickLabels(true);
 
         // Change Y-Axis Range
         NumberAxis range = (NumberAxis) xyPlot.getRangeAxis();
-        range.setRange(xFloor - 0.2, xCeil + 0.2);
+        range.setRange(floor - 0.2, ceil + 0.2);
         range.setTickUnit(new NumberTickUnit(1));
 
         // Save Chart to Image
@@ -107,98 +153,122 @@ public class DrawChart {
         if (!directory.exists()) {
             System.out.println("新建 output 資料夾中...");
             directory.mkdir();
-            // If you require it to make the entire directory path including parents,
-            // use directory.mkdirs(); here instead.
         }
 
-        File XYChart = new File("./output/" + saveFileName + ".jpeg");
+        File XYChart = new File("./output/" + functionType + "_Supply_and_Demand_LineChart.jpeg");
         ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
-
-        System.out.println("Done !!!");
     }
 
-    public Point findIntersectPoint() {
-        boolean intersected;
-        for (int i = 0; i < sellerSupply.size() - 1; i++) {
-            for (int j = 0; j < buyerDemand.size() - 1; j++) {
-                intersected = intersectCheck(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j),
-                        buyerDemand.get(j + 1));
-                if (intersected) {
-                    System.out.println("Find Instersected:\n\tSeller Point 1\t(" + sellerSupply.get(i).getX() + ", "
-                            + sellerSupply.get(i).getY() + ")\tSeller Point 2\t(" + sellerSupply.get(i + 1).getX()
-                            + ", " + sellerSupply.get(i + 1).getY() + ")\n\tBuyer Point 1\t("
-                            + buyerDemand.get(j).getX() + ", " + buyerDemand.get(j).getY() + ")\tBuyer Point 2\t("
-                            + buyerDemand.get(j + 1).getX() + ", " + buyerDemand.get(j + 1).getY() + ")\n");
-                    return intersectPoint(sellerSupply.get(i), sellerSupply.get(i + 1), buyerDemand.get(j),
-                            buyerDemand.get(j + 1));
-                }
+    private Point findTraditionalIntersectPoint() {
+        int currentSeller = 2;
+        int prevSeller = 2;
+        int currentBuyer = 2;
+        int prevBuyer = 2;
+
+        double sellerRemain = 0;
+        double buyerRemain = 0;
+        double temp = 0;
+        double quantity = 0;
+
+        while(traditionalSellerSupply.get(currentSeller).getY() < traditionalBuyerDemand.get(currentBuyer).getY()) {
+            if (currentSeller == prevSeller && temp != 0) {
+                sellerRemain = temp;
+            } else {
+                sellerRemain = traditionalSellerSupply.get(currentSeller).getX() - traditionalSellerSupply.get(currentSeller - 1).getX();
+                prevSeller = currentSeller;
+            }
+            if (currentBuyer == prevBuyer && temp != 0) {
+                buyerRemain = temp;
+            } else {
+                buyerRemain = traditionalBuyerDemand.get(currentBuyer).getX() - traditionalBuyerDemand.get(currentBuyer - 1).getX();
+                prevBuyer = currentBuyer;
+            }
+
+            if (sellerRemain > buyerRemain) {
+                temp = sellerRemain - buyerRemain;
+                quantity += buyerRemain;
+                currentBuyer += 2;
+            } else if (sellerRemain < buyerRemain) {
+                temp = buyerRemain - sellerRemain;
+                quantity += sellerRemain;
+                currentSeller += 2;
+            } else {
+                temp = 0;
+                quantity += sellerRemain;
+                currentSeller += 2;
+                currentBuyer += 2;
             }
         }
-        return null;
-    }
 
-    private Boolean intersectCheck(Point sellerP1, Point sellerP2, Point buyerP1, Point buyerP2) {
-
-        // x y 座標是否重疊
-        if (Math.max(sellerP1.getX(), sellerP2.getX()) < Math.min(buyerP1.getX(), buyerP2.getX())
-                || Math.max(sellerP1.getY(), sellerP2.getY()) < Math.min(buyerP1.getY(), buyerP2.getY())
-                || Math.max(buyerP1.getX(), buyerP2.getX()) < Math.min(sellerP1.getX(), sellerP2.getY())
-                || Math.max(buyerP1.getY(), buyerP2.getY()) < Math.min(sellerP1.getY(), sellerP2.getY())) {
-
-            return false;
-        }
-        // 不相交則向量外積則大於0
-        double a = sellerP1.getX() - buyerP1.getX();
-        double b = buyerP2.getY() - buyerP1.getY();
-        double c = sellerP1.getY() - buyerP1.getY();
-        double d = buyerP2.getX() - buyerP1.getX();
-        double e = sellerP2.getX() - buyerP1.getX();
-        double f = sellerP2.getY() - buyerP1.getY();
-        double g = buyerP1.getX() - sellerP1.getX();
-        double h = sellerP2.getY() - sellerP1.getY();
-        double i = buyerP1.getY() - sellerP1.getY();
-        double j = sellerP2.getX() - sellerP1.getX();
-        double k = buyerP2.getX() - sellerP1.getX();
-        double l = buyerP2.getY() - sellerP1.getY();
-        if (((a * b - c * d) * (e * b - f * d)) > 0
-                || ((g * h - i * j) * (k * h - l * j)) > 0) {
-
-            return false;
-        }
-        return true;
-    }
-
-    private Point intersectPoint(Point sellerP1, Point sellerP2, Point buyerP1, Point buyerP2) {
-        double sellerYDiff = sellerP1.getY() - sellerP2.getY();
-        double sellerXDiff = sellerP2.getX() - sellerP1.getX();
-        double sellerVector = sellerYDiff * sellerP1.getX() + sellerXDiff * sellerP1.getY();
-
-        double buyerYDiff = buyerP1.getY() - buyerP2.getY();
-        double buyerXDiff = buyerP2.getX() - buyerP1.getX();
-        double buyerVector = buyerYDiff * buyerP1.getX() + buyerXDiff * buyerP1.getY();
-
-        double det_k = sellerYDiff * buyerXDiff - buyerYDiff * sellerXDiff;
-
-        if (Math.abs(det_k) < 0.00001) {
-            return null;
+        if (currentSeller != prevSeller) {
+            traditionalIntersectPoint = new Point(quantity, traditionalBuyerDemand.get(currentBuyer).getY());
+        } else {
+            traditionalIntersectPoint = new Point(quantity, traditionalSellerSupply.get(currentSeller).getY());
         }
 
-        double a = buyerXDiff / det_k;
-        double b = -1 * sellerXDiff / det_k;
-        double c = -1 * buyerYDiff / det_k;
-        double d = sellerYDiff / det_k;
-
-        double x = Math.ceil((a * sellerVector + b * buyerVector) * 100) / 100;
-        double y = Math.ceil((c * sellerVector + d * buyerVector) * 100) / 100;
-
-        return new Point(x, y);
+        return traditionalIntersectPoint;
     }
 
-    public double getTraditionalProfit(Point equilibriumPoint) {
-        return equilibriumPoint.getX() * equilibriumPoint.getY();
+    private Point findModernIntersectPoint() {
+        double Qmv =  getQFunction();
+        modernIntersectPoint = new Point(modernSellerSupply.get(1).getX() + Qmv, modernSellerSupply.get(1).getY());
+
+        return modernIntersectPoint;
     }
 
-    public Point getIntersectPoint() {
-        return intersectPoint;
+    private double getQFunction() {
+        double qMin = 0;
+        // Wrap Up as Queues
+        Queue<Point> Asks = new LinkedList<>();
+        Queue<Point> Bids = new LinkedList<>();
+
+        Collections.reverse(modernSellerSupply);
+        Collections.reverse(modernBuyerDemand);
+        // Turn List to Queue
+        for (int i = 1; i < modernSellerSupply.size() - 1; i += 2) {
+            Asks.add(new Point(modernSellerSupply.get(i).getX() - modernSellerSupply.get(i + 1).getX(), modernSellerSupply.get(i).getY()));
+        }
+        for (int i = 1; i < modernBuyerDemand.size() - 1; i += 2) {
+            Bids.add(new Point(modernBuyerDemand.get(i).getX() - modernBuyerDemand.get(i + 1).getX(), modernBuyerDemand.get(i).getY()));
+        }
+        for (int i = 0; i < modernBuyerDemand.size(); i++) {
+            System.out.println(modernBuyerDemand.get(i).getX());
+        }
+        Point a = Asks.poll();
+        if (a != null) {
+            Point b = Bids.poll();
+            
+            while (b != null && b.getY() < a.getY()) {
+                b = Bids.poll();
+            }
+            
+            // qd: Will Be The Demand at Price 0
+            double qd = 0;
+            // q: Current Horizontal Distance Between The Flipped Supply and The Demand Curves (Minus The Final Value of qd, Which is Unknow at Present).
+            double q = 0;
+            while (b != null) {
+                if (a != null && a.getY() <= b.getY()) {
+                    q += a.getX();
+                    a = Asks.poll();
+                } else {
+                    q -= b.getX();
+                    qMin = Math.min(qMin, q);
+                    qd += b.getX();
+                    b = Bids.poll();
+                }
+            }
+
+            qMin += qd;
+        }
+        qMin = Math.floor(qMin * 100) / 100;
+        return qMin;
+    }
+
+    public Point getTraditionalIntersectPoint() {
+        return traditionalIntersectPoint;
+    }
+
+    public Point getModernIntersectPoint() {
+        return modernIntersectPoint;
     }
 }

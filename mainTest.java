@@ -26,7 +26,7 @@ public class mainTest {
         System.out.println("|    Generate Seller Data    |");
         System.out.println("==============================\n");
         for (Map.Entry<Integer, Double> entry : sellersPriceMap.entrySet()) {
-            System.out.println("Seller: " + entry.getKey() + "\tAmount: " + originalSeller[entry.getKey()].getAmount()
+            System.out.println("Seller: " + entry.getKey() + "\tQuantity: " + originalSeller[entry.getKey()].getQuantity()
                     + "\tPrice: " + entry.getValue());
         }
 
@@ -41,7 +41,7 @@ public class mainTest {
         System.out.println("|    Generate buyer Data     |");
         System.out.println("==============================\n");
         for (Map.Entry<Integer, Double> entry : buyersPricMap.entrySet()) {
-            System.out.println("Buyer: " + entry.getKey() + "\tAmount: " + originalBuyers[entry.getKey()].getAmount()
+            System.out.println("Buyer: " + entry.getKey() + "\tQuantity: " + originalBuyers[entry.getKey()].getQuantity()
                     + "\tPrice: " + entry.getValue());
         }
 
@@ -59,6 +59,10 @@ public class mainTest {
         List<Point> modernSellerSupply = dataProcessing.getModernSellerData();
         List<Point> traditionalBuyerDemand = dataProcessing.getTraditionalBuyerData();
         List<Point> modernBuyerDemand = dataProcessing.getModernBuyerData();
+
+        // for (int i = 0; i < modernSellerSupply.size(); i++) {
+        //     System.out.println(modernSellerSupply.get(i).getX() + "\t" + modernSellerSupply.get(i).getY());
+        // }
 
         // Print Chart Point Result
         // System.out.println();
@@ -80,36 +84,48 @@ public class mainTest {
         System.out.println("===============================");
         System.out.println("|  Draw Chart & Save to Image |");
         System.out.println("===============================\n");
-        DrawChart drawChartByTraditional = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand);
-        DrawChart drawChartByModern = new DrawChart(modernSellerSupply,
-                traditionalBuyerDemand);
+        // DrawChart drawChartByTraditional = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand);
+        // DrawChart drawChartByModern = new DrawChart(modernSellerSupply,
+        //         traditionalBuyerDemand);
+        DrawChart drawChart = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand, modernSellerSupply, modernBuyerDemand);
 
         double floor;
         double ceil;
+        double quantity;
 
+        // Floor
         if (traditionalSellerSupply.get(1).getY() < traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 2)
-                .getY()) {
+        .getY()) {
             floor = traditionalSellerSupply.get(1).getY();
         } else {
             floor = traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 2).getY();
         }
-
+        
+        // Ceiling
         if (traditionalSellerSupply.get(traditionalSellerSupply.size() - 2).getY() > traditionalBuyerDemand.get(1)
-                .getY()) {
+        .getY()) {
             ceil = traditionalSellerSupply.get(traditionalSellerSupply.size() - 2).getY();
         } else {
             ceil = traditionalBuyerDemand.get(1).getY();
         }
+        
+        // Quantity
+        if (traditionalSellerSupply.get(traditionalSellerSupply.size() - 1).getX() > traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 1).getX()) {
+            quantity = traditionalSellerSupply.get(traditionalSellerSupply.size() - 1).getX();
+        } else {
+            quantity = traditionalBuyerDemand.get(traditionalBuyerDemand.size() - 1).getX();
+        }
 
-        drawChartByTraditional.draw("Traditional_Supply_and_Demand_LineChart", floor, ceil);
-        drawChartByModern.draw("Modern_Supply_and_Demand_LineChart", floor, ceil);
+        // drawChartByTraditional.draw("Traditional_Supply_and_Demand_LineChart", floor, ceil);
+        // drawChartByModern.draw("Modern_Supply_and_Demand_LineChart", floor, ceil);
+        drawChart.draw(floor, ceil, quantity);
 
         System.out.println();
         System.out.println("==============================");
         System.out.println("|      Find Equilibrium      |");
         System.out.println("==============================\n");
 
-        // Point intersectPoint = drawChartByTraditional.getIntersectPoint();
+        // Point intersectPoint = drawChartByTraditional.getTraditionalIntersectPoint();
         // System.out.println("Equilibrium Point: \tPoint(" + intersectPoint.getX() + ",
         // " + intersectPoint.getY() + ")");
 
