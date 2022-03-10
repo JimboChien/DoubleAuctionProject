@@ -21,6 +21,7 @@ public class DrawChart {
     private List<Point> traditionalBuyerDemand = new ArrayList<Point>();
     private List<Point> modernSellerSupply = new ArrayList<Point>();
     private List<Point> modernBuyerDemand = new ArrayList<Point>();
+    private List<Point> shiftedSellerSupply = new ArrayList<Point>();
 
     Point traditionalIntersectPoint = new Point();
     Point modernIntersectPoint = new Point();
@@ -79,11 +80,15 @@ public class DrawChart {
             intersectPoint = findTraditionalIntersectPoint();
         } else if (functionType == "Modern") {
             double Qmv =  getQFunction();
+            
             // Shifted Line
             Collections.reverse(modernSellerSupply);
             for (int i = 0; i < modernSellerSupply.size(); i++) {
                 shifted.add(modernSellerSupply.get(i).getX() + Qmv, modernSellerSupply.get(i).getY());
+                shiftedSellerSupply.add(new Point(modernSellerSupply.get(i).getX() + Qmv, modernSellerSupply.get(i).getY()));
             }
+            
+            findModernIntersectPoint(Qmv);
         }
         intersect.add(intersectPoint.getX(), intersectPoint.getY());
         
@@ -121,7 +126,7 @@ public class DrawChart {
         // Setting Shifted Supply Line
         renderer.setSeriesLinesVisible(3, true);
         renderer.setSeriesShapesVisible(3, false);
-        renderer.setSeriesPaint(3, Color.blue);
+        renderer.setSeriesPaint(3, new Color(30, 144, 255));
         
 
         // Setting Intersect Point Message
@@ -209,11 +214,12 @@ public class DrawChart {
         return traditionalIntersectPoint;
     }
 
-    private Point findModernIntersectPoint() {
-        double Qmv =  getQFunction();
-        modernIntersectPoint = new Point(modernSellerSupply.get(1).getX() + Qmv, modernSellerSupply.get(1).getY());
+    private void findModernIntersectPoint(double Qmv) {
+        
+        for (int i = 0; i < shiftedSellerSupply.size(); i++) {
+            System.out.println(shiftedSellerSupply.get(i).getX() + "\t" + shiftedSellerSupply.get(i).getY());
+        }
 
-        return modernIntersectPoint;
     }
 
     private double getQFunction() {
@@ -230,9 +236,6 @@ public class DrawChart {
         }
         for (int i = 1; i < modernBuyerDemand.size() - 1; i += 2) {
             Bids.add(new Point(modernBuyerDemand.get(i).getX() - modernBuyerDemand.get(i + 1).getX(), modernBuyerDemand.get(i).getY()));
-        }
-        for (int i = 0; i < modernBuyerDemand.size(); i++) {
-            System.out.println(modernBuyerDemand.get(i).getX());
         }
         Point a = Asks.poll();
         if (a != null) {
@@ -260,7 +263,7 @@ public class DrawChart {
 
             qMin += qd;
         }
-        qMin = Math.floor(qMin * 100) / 100;
+        qMin = Math.ceil(qMin * 100) / 100;
         return qMin;
     }
 

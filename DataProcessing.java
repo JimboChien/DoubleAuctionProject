@@ -55,12 +55,12 @@ public class DataProcessing {
                 prevModern = new Point(prevModern.getX(), prevModern.getY());
             }
             prevTraditional = new Point(
-                    Math.floor((prevTraditional.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
+                    Math.ceil((prevTraditional.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
                             * 100)
                             / 100,
                     sortingSellersPrice.get(i).getValue());
             prevModern = new Point(
-                    Math.floor((prevModern.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
+                    Math.ceil((prevModern.getX() + originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity())
                             * 100)
                             / 100,
                     sortingSellersPrice.get(i).getValue());
