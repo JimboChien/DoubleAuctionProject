@@ -8,8 +8,8 @@ public class mainTest {
          * Generate Data
          ************************/
 
-        // DataGenerator dataGenerator = new DataGenerator();
-        DataGenerator dataGenerator = new DataGenerator(1);
+        DataGenerator dataGenerator = new DataGenerator();
+        // DataGenerator dataGenerator = new DataGenerator(1);
         Users[] originalSeller;
         Users[] originalBuyers;
         Map<Integer, Double> sellersPriceMap = new HashMap<>();

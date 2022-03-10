@@ -70,8 +70,8 @@ public class DataGenerator {
     }
 
     private double randomValue(double floor, double ceil) {
-        double diff = ceil - floor;
-        double result = Math.ceil((floor + r.nextDouble() * diff) * 100) / 100 ;
+        double diff = DoubleMath.sub(ceil, floor);
+        double result = DoubleMath.add(floor, DoubleMath.mul(r.nextDouble(), diff));
 
         return result;
     }

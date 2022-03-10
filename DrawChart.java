@@ -84,11 +84,11 @@ public class DrawChart {
             // Shifted Line
             Collections.reverse(modernSellerSupply);
             for (int i = 0; i < modernSellerSupply.size(); i++) {
-                shifted.add(modernSellerSupply.get(i).getX() + Qmv, modernSellerSupply.get(i).getY());
-                shiftedSellerSupply.add(new Point(modernSellerSupply.get(i).getX() + Qmv, modernSellerSupply.get(i).getY()));
+                shifted.add(DoubleMath.add(modernSellerSupply.get(i).getX(), Qmv), modernSellerSupply.get(i).getY());
+                shiftedSellerSupply.add(new Point(DoubleMath.add(modernSellerSupply.get(i).getX(), Qmv), modernSellerSupply.get(i).getY()));
             }
             
-            findModernIntersectPoint(Qmv);
+            intersectPoint = findModernIntersectPoint();
         }
         intersect.add(intersectPoint.getX(), intersectPoint.getY());
         
@@ -179,27 +179,27 @@ public class DrawChart {
             if (currentSeller == prevSeller && temp != 0) {
                 sellerRemain = temp;
             } else {
-                sellerRemain = traditionalSellerSupply.get(currentSeller).getX() - traditionalSellerSupply.get(currentSeller - 1).getX();
+                sellerRemain = DoubleMath.sub(traditionalSellerSupply.get(currentSeller).getX(), traditionalSellerSupply.get(currentSeller - 1).getX());
                 prevSeller = currentSeller;
             }
             if (currentBuyer == prevBuyer && temp != 0) {
                 buyerRemain = temp;
             } else {
-                buyerRemain = traditionalBuyerDemand.get(currentBuyer).getX() - traditionalBuyerDemand.get(currentBuyer - 1).getX();
+                buyerRemain = DoubleMath.sub(traditionalBuyerDemand.get(currentBuyer).getX(), traditionalBuyerDemand.get(currentBuyer - 1).getX());
                 prevBuyer = currentBuyer;
             }
 
             if (sellerRemain > buyerRemain) {
-                temp = sellerRemain - buyerRemain;
-                quantity += buyerRemain;
+                temp = DoubleMath.sub(sellerRemain, buyerRemain);
+                quantity = DoubleMath.add(quantity, buyerRemain);
                 currentBuyer += 2;
             } else if (sellerRemain < buyerRemain) {
-                temp = buyerRemain - sellerRemain;
-                quantity += sellerRemain;
+                temp = DoubleMath.sub(buyerRemain, sellerRemain);
+                quantity = DoubleMath.add(quantity, sellerRemain);
                 currentSeller += 2;
             } else {
                 temp = 0;
-                quantity += sellerRemain;
+                quantity = DoubleMath.add(quantity, sellerRemain);
                 currentSeller += 2;
                 currentBuyer += 2;
             }
@@ -210,16 +210,30 @@ public class DrawChart {
         } else {
             traditionalIntersectPoint = new Point(quantity, traditionalSellerSupply.get(currentSeller).getY());
         }
-
+        System.out.println("Traditional Intersect Point: (" + traditionalIntersectPoint.getX() + ", " + traditionalIntersectPoint.getY() + ")");
+        
         return traditionalIntersectPoint;
     }
-
-    private void findModernIntersectPoint(double Qmv) {
+    
+    private Point findModernIntersectPoint() {
         
-        for (int i = 0; i < shiftedSellerSupply.size(); i++) {
-            System.out.println(shiftedSellerSupply.get(i).getX() + "\t" + shiftedSellerSupply.get(i).getY());
-        }
+        Collections.reverse(modernBuyerDemand);
+        int currentDemandIndex = 0;
 
+        for (int i = 2; i < shiftedSellerSupply.size() - 1; i += 2) {
+            if (shiftedSellerSupply.get(i).getX() >= 0) {
+                while (shiftedSellerSupply.get(i).getY() < modernBuyerDemand.get(currentDemandIndex).getY() && shiftedSellerSupply.get(i).getY() < modernBuyerDemand.get(currentDemandIndex + 1).getY()) {
+                    currentDemandIndex += 2;
+                } 
+                if (shiftedSellerSupply.get(i).getX() == modernBuyerDemand.get(currentDemandIndex).getX()) {
+                    modernIntersectPoint = new Point(shiftedSellerSupply.get(i).getX(), shiftedSellerSupply.get(i).getY());
+                    break;
+                }
+            }
+        }
+        System.out.println("Modern Intersect Point: (" + modernIntersectPoint.getX() + ", " + modernIntersectPoint.getY() + ")");
+        
+        return modernIntersectPoint;
     }
 
     private double getQFunction() {
@@ -231,11 +245,11 @@ public class DrawChart {
         Collections.reverse(modernSellerSupply);
         Collections.reverse(modernBuyerDemand);
         // Turn List to Queue
-        for (int i = 1; i < modernSellerSupply.size() - 1; i += 2) {
-            Asks.add(new Point(modernSellerSupply.get(i).getX() - modernSellerSupply.get(i + 1).getX(), modernSellerSupply.get(i).getY()));
+        for (int i = 1; i < modernSellerSupply.size() - 2; i += 2) {    
+            Asks.add(new Point(DoubleMath.sub(modernSellerSupply.get(i).getX(), modernSellerSupply.get(i + 1).getX()), modernSellerSupply.get(i).getY()));
         }
-        for (int i = 1; i < modernBuyerDemand.size() - 1; i += 2) {
-            Bids.add(new Point(modernBuyerDemand.get(i).getX() - modernBuyerDemand.get(i + 1).getX(), modernBuyerDemand.get(i).getY()));
+        for (int i = 1; i < modernBuyerDemand.size() - 2; i += 2) { // not include last extend line
+            Bids.add(new Point(DoubleMath.sub(modernBuyerDemand.get(i).getX(), modernBuyerDemand.get(i + 1).getX()), modernBuyerDemand.get(i).getY()));
         }
         Point a = Asks.poll();
         if (a != null) {
@@ -251,19 +265,18 @@ public class DrawChart {
             double q = 0;
             while (b != null) {
                 if (a != null && a.getY() <= b.getY()) {
-                    q += a.getX();
+                    q = DoubleMath.add(q,a.getX());
                     a = Asks.poll();
                 } else {
-                    q -= b.getX();
+                    q = DoubleMath.sub(q, b.getX());
                     qMin = Math.min(qMin, q);
-                    qd += b.getX();
+                    qd = DoubleMath.add(qd, b.getX());
                     b = Bids.poll();
                 }
             }
 
-            qMin += qd;
+            qMin = DoubleMath.add(qMin, qd);
         }
-        qMin = Math.ceil(qMin * 100) / 100;
         return qMin;
     }
 
