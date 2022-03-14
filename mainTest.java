@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 public class mainTest {
     public static void main(String[] args) throws IOException {
@@ -8,8 +9,8 @@ public class mainTest {
          * Generate Data
          ************************/
 
-        DataGenerator dataGenerator = new DataGenerator();
-        // DataGenerator dataGenerator = new DataGenerator(1);
+        // DataGenerator dataGenerator = new DataGenerator();
+        DataGenerator dataGenerator = new DataGenerator(1);
         Users[] originalSeller;
         Users[] originalBuyers;
         Map<Integer, Double> sellersPriceMap = new HashMap<>();
@@ -59,6 +60,23 @@ public class mainTest {
         List<Point> modernSellerSupply = dataProcessing.getModernSellerData();
         List<Point> traditionalBuyerDemand = dataProcessing.getTraditionalBuyerData();
         List<Point> modernBuyerDemand = dataProcessing.getModernBuyerData();
+        List<Entry<Integer, Double>> sortingSellersPrice = dataProcessing.getSortingSellersPrice();
+        List<Entry<Integer, Double>> sortingBuyersPrice = dataProcessing.getSortingBuyersPrice();
+
+        // Print Result
+        System.out.println();
+        System.out.println("==============================");
+        System.out.println("|      Sorting By Price      |");
+        System.out.println("==============================\n");
+        System.out.println("sortingSellersPrice:");
+        sortingSellersPrice.forEach(result -> System.out.println("Key: " +
+        result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        originalSeller[result.getKey()].getQuantity()));
+        System.out.println();
+        System.out.println("sortingBuyersPrice:");
+        sortingBuyersPrice.forEach(result -> System.out.println("Key: " +
+        result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        originalBuyers[result.getKey()].getQuantity()));
 
         // for (int i = 0; i < modernSellerSupply.size(); i++) {
         //     System.out.println(modernSellerSupply.get(i).getX() + "\t" + modernSellerSupply.get(i).getY());
@@ -70,10 +88,9 @@ public class mainTest {
         // System.out.println("X: " + traditionalSellerSupply.get(i).getX() + "\t\tY: "
         // + traditionalSellerSupply.get(i).getY());
         // }
-        // System.out.println();
-        // for (int i = 0; i < traditionalBuyerDemand.size(); i++) {
-        // System.out.println("X: " + traditionalBuyerDemand.get(i).getX() + "\t\tY: " +
-        // traditionalBuyerDemand.get(i).getY());
+        // System.out.println("traditionalSellerSupply");
+        // for (int i = 0; i < traditionalSellerSupply.size(); i++) {
+        //     System.out.println("X: " + traditionalSellerSupply.get(i).getX() + "\t\tY: " + traditionalSellerSupply.get(i).getY());
         // }
 
         /************************
@@ -122,21 +139,27 @@ public class mainTest {
 
         System.out.println();
         System.out.println("==============================");
-        System.out.println("|      Find Equilibrium      |");
+        System.out.println("|    Find Intersect Point    |");
         System.out.println("==============================\n");
 
-        // Point intersectPoint = drawChartByTraditional.getTraditionalIntersectPoint();
-        // System.out.println("Equilibrium Point: \tPoint(" + intersectPoint.getX() + ",
-        // " + intersectPoint.getY() + ")");
-
+        Point traditionalIntersectPoint = drawChart.getTraditionalIntersectPoint();
+        Point modernIntersectPoint = drawChart.getModernIntersectPoint();
+        System.out.println("Traditional Intersect Point: (" + traditionalIntersectPoint.getX() + ", " + traditionalIntersectPoint.getY() + ")");
+        System.out.println("Modern Intersect Point: (" + modernIntersectPoint.getX() + ", " + modernIntersectPoint.getY() + ")");
+        
         System.out.println();
         System.out.println("==============================");
         System.out.println("|      Calculate Profit      |");
         System.out.println("==============================\n");
-
-        // Profit traditionalProfit = new Profit(traditionalSellerSupply, buyerDemand);
-        // System.out.println("Traditional Profit: " +
-        // traditionalProfit.getTraditionalProfit(intersectPoint));
+        
+        List<Point> shiftedSellerSupply = drawChart.getShiftedSellerSupply();
+        Profit profit = new Profit(traditionalSellerSupply, traditionalBuyerDemand, shiftedSellerSupply, modernBuyerDemand);
+        System.out.println("Traditional Profit: " + profit.getTraditionalProfit(traditionalIntersectPoint));
+        System.out.println("Modern Profit: " + profit.getModernProfit(modernIntersectPoint));
+        // System.out.println("shiftedSellerSupply");
+        // for (int i = 0; i < shiftedSellerSupply.size(); i++) {
+        //     System.out.println("X: " + shiftedSellerSupply.get(i).getX() + "\t\tY: " + shiftedSellerSupply.get(i).getY());
+        // }
 
         System.out.println("\n\n[+] Mission Completed !!!\n");
     }

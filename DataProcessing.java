@@ -9,35 +9,42 @@ public class DataProcessing {
 
     private Users[] originalSeller;
     private Users[] originalBuyers;
-    private Map<Integer, Double> sellersPriceMap = new HashMap<>();
-    private Map<Integer, Double> buyersPricMap = new HashMap<>();
-
+    
     List<Point> traditionalSellerData = new ArrayList<Point>();
     List<Point> modernSellerData = new ArrayList<Point>();
     List<Point> traditionalBuyerData = new ArrayList<Point>();
     List<Point> modernBuyerData;
+    
+    List<Entry<Integer, Double>> sortingSellersPrice;
+    List<Entry<Integer, Double>> sortingBuyersPrice;
 
     public DataProcessing(Users[] originalSeller, Users[] originalBuyers, Map<Integer, Double> sellersPriceMap,
             Map<Integer, Double> buyersPricMap, double ceilPrice) {
         this.originalSeller = originalSeller;
         this.originalBuyers = originalBuyers;
-        this.sellersPriceMap = sellersPriceMap;
-        this.buyersPricMap = buyersPricMap;
+
+        // Sorting by Price
+        sortingSellersPrice = new ArrayList<>(sellersPriceMap.entrySet());
+        sortingSellersPrice.sort(Entry.comparingByValue());
+        // System.out.println("\nsortingSellersPrice:");
+        // sortingSellersPrice.forEach(result -> System.out.println("Key: " +
+        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        // originalSeller[result.getKey()].getQuantity()));
+
+        // Sorting by Price
+        sortingBuyersPrice = new ArrayList<>(buyersPricMap.entrySet());
+        sortingBuyersPrice.sort(Entry.<Integer, Double>comparingByValue().reversed());
+        // System.out.println("\nsortingBuyersPrice:");
+        // sortingBuyersPrice.forEach(result -> System.out.println("Key: " +
+        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
+        // originalBuyers[result.getKey()].getQuantity()));
 
         ProcessingSellerSupply(ceilPrice);
         ProcessingBuyerDemand(ceilPrice);
     }
 
-    // public List<Point> traditionalSellerSupply() {
     private void ProcessingSellerSupply(double ceilPrice) {
 
-        // Sorting by Price
-        List<Entry<Integer, Double>> sortingSellersPrice = new ArrayList<>(sellersPriceMap.entrySet());
-        sortingSellersPrice.sort(Entry.comparingByValue());
-        // System.out.println();
-        // sortingSellersPrice.forEach(result -> System.out.println("Key: " +
-        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
-        // originalSeller[result.getKey()].getQuantity()));
         Point prevTraditional = new Point(0, 0);
         Point prevModern = new Point(0, 0);
 
@@ -77,16 +84,8 @@ public class DataProcessing {
         Collections.reverse(modernSellerData);
     }
 
-    // public List<Point> traditionalBuyerDemand(double ceilPrice) {
     private void ProcessingBuyerDemand(double ceilPrice) {
 
-        // Sorting by Price
-        List<Entry<Integer, Double>> sortingBuyersPrice = new ArrayList<>(buyersPricMap.entrySet());
-        sortingBuyersPrice.sort(Entry.<Integer, Double>comparingByValue().reversed());
-        // System.out.println();
-        // sortingBuyersPrice.forEach(result -> System.out.println("Key: " +
-        // result.getKey() + "\t\tValue: " + result.getValue() + "\tQuantity: " +
-        // originalBuyers[result.getKey()].getQuantity()));
         Point prev = new Point(0, ceilPrice);
 
         // Find Point
@@ -127,6 +126,14 @@ public class DataProcessing {
 
     public List<Point> getModernBuyerData() {
         return modernBuyerData;
+    }
+
+    public List<Entry<Integer, Double>> getSortingSellersPrice(){
+        return sortingSellersPrice;
+    }
+
+    public List<Entry<Integer, Double>> getSortingBuyersPrice(){
+        return sortingBuyersPrice;
     }
 
 }

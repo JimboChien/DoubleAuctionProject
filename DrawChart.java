@@ -210,7 +210,7 @@ public class DrawChart {
         } else {
             traditionalIntersectPoint = new Point(quantity, traditionalSellerSupply.get(currentSeller).getY());
         }
-        System.out.println("Traditional Intersect Point: (" + traditionalIntersectPoint.getX() + ", " + traditionalIntersectPoint.getY() + ")");
+        // System.out.println("Traditional Intersect Point: (" + traditionalIntersectPoint.getX() + ", " + traditionalIntersectPoint.getY() + ")");
         
         return traditionalIntersectPoint;
     }
@@ -231,7 +231,7 @@ public class DrawChart {
                 }
             }
         }
-        System.out.println("Modern Intersect Point: (" + modernIntersectPoint.getX() + ", " + modernIntersectPoint.getY() + ")");
+        // System.out.println("Modern Intersect Point: (" + modernIntersectPoint.getX() + ", " + modernIntersectPoint.getY() + ")");
         
         return modernIntersectPoint;
     }
@@ -286,5 +286,9 @@ public class DrawChart {
 
     public Point getModernIntersectPoint() {
         return modernIntersectPoint;
+    }
+
+    public List<Point> getShiftedSellerSupply() {
+        return shiftedSellerSupply;
     }
 }
