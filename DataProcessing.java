@@ -9,12 +9,12 @@ public class DataProcessing {
 
     private Users[] originalSeller;
     private Users[] originalBuyers;
-    
+
     List<Point> traditionalSellerData = new ArrayList<Point>();
     List<Point> modernSellerData = new ArrayList<Point>();
     List<Point> traditionalBuyerData = new ArrayList<Point>();
     List<Point> modernBuyerData;
-    
+
     List<Entry<Integer, Double>> sortingSellersPrice;
     List<Entry<Integer, Double>> sortingBuyersPrice;
 
@@ -62,11 +62,13 @@ public class DataProcessing {
                 prevModern = new Point(prevModern.getX(), prevModern.getY());
             }
             prevTraditional = new Point(
-                DoubleMath.add(prevTraditional.getX(), originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity()), 
-                sortingSellersPrice.get(i).getValue());
+                    DoubleMath.add(prevTraditional.getX(),
+                            originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity()),
+                    sortingSellersPrice.get(i).getValue());
             prevModern = new Point(
-                DoubleMath.add(prevModern.getX(), originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity()), 
-                sortingSellersPrice.get(i).getValue());
+                    DoubleMath.add(prevModern.getX(),
+                            originalSeller[sortingSellersPrice.get(i).getKey()].getQuantity()),
+                    sortingSellersPrice.get(i).getValue());
             if (i + 1 == sortingSellersPrice.size()) {
                 traditionalSellerData.add(prevTraditional);
                 modernSellerData.add(prevModern);
@@ -75,7 +77,8 @@ public class DataProcessing {
             }
         }
         // Add Price Extend Line
-        traditionalSellerData.add(new Point(traditionalSellerData.get(traditionalSellerData.size() - 1).getX(), ceilPrice));
+        traditionalSellerData
+                .add(new Point(traditionalSellerData.get(traditionalSellerData.size() - 1).getX(), ceilPrice));
         modernSellerData.add(new Point(modernSellerData.get(modernSellerData.size() - 1).getX(), ceilPrice));
 
         for (int i = 0; i < modernSellerData.size(); i++) {
@@ -106,11 +109,15 @@ public class DataProcessing {
             }
         }
 
-        traditionalBuyerData.add(new Point(traditionalBuyerData.get(traditionalBuyerData.size() - 1).getX() , 0));
+        traditionalBuyerData.add(new Point(traditionalBuyerData.get(traditionalBuyerData.size() - 1).getX(), 0));
 
         modernBuyerData = new ArrayList<Point>(traditionalBuyerData);
 
     }
+
+    /*************************
+     * Get Function
+     *************************/
 
     public List<Point> getTraditionalSellerData() {
         return traditionalSellerData;
@@ -128,11 +135,11 @@ public class DataProcessing {
         return modernBuyerData;
     }
 
-    public List<Entry<Integer, Double>> getSortingSellersPrice(){
+    public List<Entry<Integer, Double>> getSortingSellersPrice() {
         return sortingSellersPrice;
     }
 
-    public List<Entry<Integer, Double>> getSortingBuyersPrice(){
+    public List<Entry<Integer, Double>> getSortingBuyersPrice() {
         return sortingBuyersPrice;
     }
 

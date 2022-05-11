@@ -2,8 +2,8 @@ public class Point {
     private double x;
     private double y;
 
-    public Point(){
-        this(0,0);
+    public Point() {
+        this(0, 0);
     }
 
     public Point(double x, double y) {
@@ -27,4 +27,7 @@ public class Point {
         this.y = y;
     }
 
+    public String toString() {
+        return "(" + x + "," + y + ")";
+    }
 }

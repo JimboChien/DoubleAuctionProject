@@ -1,5 +1,5 @@
 public class Users {
-    
+
     private String role;
     private int roleId;
     private double quantity;
@@ -10,6 +10,10 @@ public class Users {
         this.roleId = roleId;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public int getId() {
+        return roleId;
     }
 
     public double getQuantity() {
