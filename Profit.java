@@ -29,27 +29,13 @@ public class Profit {
         // calculate total profit
         double volume = shiftedSellerSupply.get(shiftedSellerSupply.size() - 1).getX();
         for (int i = 2; i < modernBuyerDemand.size(); i += 2) {
-            if (volume >= modernBuyerDemand.get(i).getX()) {
-                if (modernBuyerDemand.get(i - 1).getX() <= 0) {
-                    totalProfit = DoubleMath.add(totalProfit,
-                            DoubleMath.mul(modernBuyerDemand.get(i).getX(), modernBuyerDemand.get(i).getY()));
-                } else {
-                    totalProfit = DoubleMath.add(totalProfit,
-                            DoubleMath.mul(
-                                    DoubleMath.sub(modernBuyerDemand.get(i).getX(),
-                                            modernBuyerDemand.get(i - 1).getX()),
-                                    modernBuyerDemand.get(i).getY()));
-
-                }
-            } else {
-                if (volume != modernBuyerDemand.get(i - 1).getX()) {
-                    totalProfit = DoubleMath.add(totalProfit,
-                            DoubleMath.mul(DoubleMath.sub(modernBuyerDemand.get(i).getX(), volume),
-                                    modernBuyerDemand.get(i).getY()));
-                }
+            totalProfit = DoubleMath.add(totalProfit,
+                    DoubleMath.mul(
+                            DoubleMath.sub(modernBuyerDemand.get(i).getX(), modernBuyerDemand.get(i - 1).getX()),
+                            modernBuyerDemand.get(i).getY()));
+            if (volume <= modernBuyerDemand.get(i).getX()) {
                 break;
             }
-
         }
 
         // calculate seller's profit & price max

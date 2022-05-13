@@ -55,7 +55,7 @@ public class mainTest {
         /************************
          * For Loop 執行次數
          ************************/
-        for (int i = 0; i < 2; i++) { // 改 i 調整執行次數
+        for (int i = 0; i < 20; i++) { // 改 i 調整執行次數
 
             appendStrToFile("\n==============================\n");
             appendStrToFile("             No " + (i + 1) + "            \n");
@@ -174,7 +174,6 @@ public class mainTest {
                     "\n\t\t\tTotal Profit = " + profit.getModernProfit());
 
             appendStrToFile("\n\n\t\t成交量: " + shiftedSellerSupply.get(shiftedSellerSupply.size() - 1).getX());
-
             appendStrToFile("\n\n\t\t均價: " + profit.getPriceAvg());
             appendStrToFile("\n\t\t最高: " + profit.getPriceMax());
             appendStrToFile("\n\t\t最低: " + profit.getPriceMin());
