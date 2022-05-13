@@ -1,13 +1,17 @@
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.Map.Entry;
 
 public class mainTest {
     public static void main(String[] args) throws IOException {
 
-        System.out.println("==============================");
-        System.out.println("             Start            ");
-        System.out.println("==============================");
+        clearTheFile();
+        appendStrToFile("==============================\n");
+        appendStrToFile("             Start            \n");
+        appendStrToFile("==============================\n");
 
         /************************
          * Generate Data
@@ -28,13 +32,11 @@ public class mainTest {
             sellersPriceMap.put(i, originalSeller[i].getPrice());
         }
         // Print Result
-        System.out.println();
-        System.out.println("[+] Generate Seller Data\n");
+        appendStrToFile("\n[+] Generate Seller Data\n");
         for (Map.Entry<Integer, Double> entry : sellersPriceMap.entrySet()) {
-            System.out
-                    .println("\tSeller: " + entry.getKey() + "\tQuantity: "
-                            + originalSeller[entry.getKey()].getQuantity()
-                            + "\tPrice: " + entry.getValue());
+            appendStrToFile("\tSeller: " + entry.getKey() + "\tQuantity: "
+                    + originalSeller[entry.getKey()].getQuantity()
+                    + "\tPrice: " + entry.getValue() + "\n");
         }
 
         originalBuyers = dataGenerator.getBuyers();
@@ -43,23 +45,21 @@ public class mainTest {
             buyersPricMap.put(i, originalBuyers[i].getPrice());
         }
         // Print Result
-        System.out.println();
-        System.out.println("[+] Generate Buyer Data\n");
+        appendStrToFile("\n[+] Generate Buyer Data\n");
         for (Map.Entry<Integer, Double> entry : buyersPricMap.entrySet()) {
-            System.out
-                    .println(
-                            "\tBuyer: " + entry.getKey() + "\tQuantity: " + originalBuyers[entry.getKey()].getQuantity()
-                                    + "\tPrice: " + entry.getValue());
+            appendStrToFile(
+                    "\tBuyer: " + entry.getKey() + "\tQuantity: " + originalBuyers[entry.getKey()].getQuantity()
+                            + "\tPrice: " + entry.getValue() + "\n");
         }
 
         /************************
          * For Loop 執行次數
          ************************/
-        for (int i = 0; i < 20; i++) { // 改 i 調整執行次數
+        for (int i = 0; i < 2; i++) { // 改 i 調整執行次數
 
-            System.out.println("\n==============================");
-            System.out.println("             No " + (i + 1) + "            ");
-            System.out.println("==============================");
+            appendStrToFile("\n==============================\n");
+            appendStrToFile("             No " + (i + 1) + "            \n");
+            appendStrToFile("==============================\n");
             /************************
              * Data Processing
              ************************/
@@ -108,8 +108,7 @@ public class mainTest {
              * Draw Chart
              ************************/
 
-            System.out.println();
-            System.out.println("\t[+] Draw Chart & Save to Image\n");
+            appendStrToFile("\n\t[+] Draw Chart & Save to Image\n");
             DrawChart drawChart = new DrawChart(traditionalSellerSupply, traditionalBuyerDemand, modernSellerSupply,
                     modernBuyerDemand);
 
@@ -158,28 +157,27 @@ public class mainTest {
              * modernIntersectPoint.getY()
              * + ")");
              */
-            System.out.println();
-            System.out.println("\t[+] Calculate Profit\n");
+            appendStrToFile("\n\n\t[+] Calculate Profit\n");
 
             List<Point> shiftedSellerSupply = drawChart.getShiftedSellerSupply();
 
             Profit profit = new Profit();
-            System.out.println("\t\tTraditional Profit: " + profit.getTraditionalProfit(traditionalIntersectPoint));
+            appendStrToFile("\n\t\tTraditional Profit: " + profit.getTraditionalProfit(traditionalIntersectPoint));
 
             profit.calculateModernProfit(modernBuyerDemand, shiftedSellerSupply);
-            System.out.println("\t\tModern Profit: ");
-            System.out.println(
-                    "\t\t\tSeller Profit = " + profit.getModernSellerProfit());
-            System.out.println(
-                    "\t\t\tBuyer Profit = " + profit.getModernBuyerProfit());
-            System.out.println(
-                    "\t\t\tTotal Profit = " + profit.getModernProfit());
+            appendStrToFile("\n\n\t\tModern Profit: ");
+            appendStrToFile(
+                    "\n\t\t\tSeller Profit = " + profit.getModernSellerProfit());
+            appendStrToFile(
+                    "\n\t\t\tBuyer Profit = " + profit.getModernBuyerProfit());
+            appendStrToFile(
+                    "\n\t\t\tTotal Profit = " + profit.getModernProfit());
 
-            System.out.println("\n\t\t成交量: " + shiftedSellerSupply.get(shiftedSellerSupply.size() - 1).getX());
+            appendStrToFile("\n\n\t\t成交量: " + shiftedSellerSupply.get(shiftedSellerSupply.size() - 1).getX());
 
-            System.out.println("\n\t\t均價: " + profit.getPriceAvg());
-            System.out.println("\t\t最高: " + profit.getPriceMax());
-            System.out.println("\t\t最低: " + profit.getPriceMin());
+            appendStrToFile("\n\n\t\t均價: " + profit.getPriceAvg());
+            appendStrToFile("\n\t\t最高: " + profit.getPriceMax());
+            appendStrToFile("\n\t\t最低: " + profit.getPriceMin());
 
             /************************
              * Pricing Function
@@ -218,13 +216,11 @@ public class mainTest {
                 sellersPriceMap.put(j, originalSeller[j].getPrice());
             }
             // Print Result
-            System.out.println();
-            System.out.println("[+] New Seller Data\n");
+            appendStrToFile("\n\n\n[+] New Seller Data\n");
             for (Map.Entry<Integer, Double> entry : sellersPriceMap.entrySet()) {
-                System.out
-                        .println("\tSeller: " + entry.getKey() + "\tQuantity: "
-                                + originalSeller[entry.getKey()].getQuantity()
-                                + "\tPrice: " + entry.getValue());
+                appendStrToFile("\tSeller: " + entry.getKey() + "\tQuantity: "
+                        + originalSeller[entry.getKey()].getQuantity()
+                        + "\tPrice: " + entry.getValue() + "\n");
             }
 
             // Reset Buyer's Price to Map
@@ -233,19 +229,37 @@ public class mainTest {
                 buyersPricMap.put(j, originalBuyers[j].getPrice());
             }
             // Print Result
-            System.out.println();
-            System.out.println("[+] New Buyer Data\n");
+            appendStrToFile("\n[+] New Buyer Data\n");
             for (Map.Entry<Integer, Double> entry : buyersPricMap.entrySet()) {
-                System.out
-                        .println(
-                                "\tBuyer: " + entry.getKey() + "\tQuantity: "
-                                        + originalBuyers[entry.getKey()].getQuantity()
-                                        + "\tPrice: " + entry.getValue());
+                appendStrToFile(
+                        "\tBuyer: " + entry.getKey() + "\tQuantity: "
+                                + originalBuyers[entry.getKey()].getQuantity()
+                                + "\tPrice: " + entry.getValue() + "\n");
             }
 
         }
-        System.out.println("\n\n==============================");
-        System.out.println("  Mission Completed !!!!!!!   ");
-        System.out.println("==============================\n");
+        appendStrToFile("\n\n==============================\n");
+        appendStrToFile("  Mission Completed !!!!!!!   \n");
+        appendStrToFile("==============================\n\n");
+    }
+
+    public static void appendStrToFile(String str) {
+        try {
+            System.out.print(str);
+            BufferedWriter out = new BufferedWriter(new FileWriter("./output/log.txt", true));
+
+            out.write(str);
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Exception occurred " + e);
+        }
+    }
+
+    public static void clearTheFile() throws IOException {
+        FileWriter fw = new FileWriter("./output/log.txt", false);
+        PrintWriter pw = new PrintWriter(fw, false);
+        pw.flush();
+        pw.close();
+        fw.close();
     }
 }

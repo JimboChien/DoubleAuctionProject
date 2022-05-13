@@ -1,4 +1,6 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -83,7 +85,17 @@ public class DrawChart {
             intersectPoint = findTraditionalIntersectPoint();
         } else if (functionType == "Modern") {
             double Qmv = getQFunction();
-            System.out.println("\n\t\tQmv: " + Qmv);
+
+            try {
+                System.out.print("\t\tQmv: " + Qmv);
+                BufferedWriter out = new BufferedWriter(new FileWriter("./output/log.txt", true));
+
+                out.write("\t\tQmv: " + Qmv);
+                out.close();
+            } catch (IOException e) {
+                System.out.println("Exception occurred " + e);
+            }
+
             // Shifted Line
             Collections.reverse(modernSellerSupply);
             for (int i = 0; i < modernSellerSupply.size(); i++) {
