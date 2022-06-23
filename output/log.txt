@@ -222,8 +222,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 23.9
-			傳統成交量: 4.29
+		Traditional Profit: 26.35
+			傳統成交量: 4.73
 			傳統成交價: 5.57
 
 		Modern Profit: 
@@ -694,8 +694,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.35
-			傳統成交量: 5.14
+		Traditional Profit: 30.75
+			傳統成交量: 5.78
 			傳統成交價: 5.32
 
 		Modern Profit: 
@@ -753,8 +753,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.3
-			傳統成交量: 5.14
+		Traditional Profit: 30.7
+			傳統成交量: 5.78
 			傳統成交價: 5.31
 
 		Modern Profit: 
@@ -812,8 +812,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.3
-			傳統成交量: 5.14
+		Traditional Profit: 42.27
+			傳統成交量: 7.96
 			傳統成交價: 5.31
 
 		Modern Profit: 
@@ -871,8 +871,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.25
-			傳統成交量: 5.14
+		Traditional Profit: 42.19
+			傳統成交量: 7.96
 			傳統成交價: 5.3
 
 		Modern Profit: 
@@ -930,8 +930,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.2
-			傳統成交量: 5.14
+		Traditional Profit: 42.11
+			傳統成交量: 7.96
 			傳統成交價: 5.29
 
 		Modern Profit: 
@@ -989,8 +989,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.2
-			傳統成交量: 5.14
+		Traditional Profit: 42.11
+			傳統成交量: 7.96
 			傳統成交價: 5.29
 
 		Modern Profit: 
@@ -1048,8 +1048,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.2
-			傳統成交量: 5.14
+		Traditional Profit: 42.11
+			傳統成交量: 7.96
 			傳統成交價: 5.29
 
 		Modern Profit: 
@@ -1107,8 +1107,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.14
-			傳統成交量: 5.14
+		Traditional Profit: 42.03
+			傳統成交量: 7.96
 			傳統成交價: 5.28
 
 		Modern Profit: 
@@ -1166,8 +1166,8 @@
 
 	[+] Calculate Profit
 
-		Traditional Profit: 27.14
-			傳統成交量: 5.14
+		Traditional Profit: 50.64
+			傳統成交量: 9.59
 			傳統成交價: 5.28
 
 		Modern Profit: 

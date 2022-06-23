@@ -225,7 +225,14 @@ public class DrawChart {
         if (currentSeller != prevSeller) {
             traditionalIntersectPoint = new Point(quantity, traditionalBuyerDemand.get(currentBuyer).getY());
         } else {
-            traditionalIntersectPoint = new Point(quantity, traditionalSellerSupply.get(currentSeller).getY());
+            if (traditionalBuyerDemand.get(currentBuyer).getY() == traditionalSellerSupply.get(currentSeller).getY()) {
+                traditionalIntersectPoint = new Point(
+                        Math.min(traditionalBuyerDemand.get(currentBuyer).getX(),
+                                traditionalSellerSupply.get(currentSeller).getX()),
+                        traditionalSellerSupply.get(currentSeller).getY());
+            } else {
+                traditionalIntersectPoint = new Point(quantity, traditionalSellerSupply.get(currentSeller).getY());
+            }
         }
         // System.out.println("Traditional Intersect Point: (" +
         // traditionalIntersectPoint.getX() + ", " + traditionalIntersectPoint.getY() +
