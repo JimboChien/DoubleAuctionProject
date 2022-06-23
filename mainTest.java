@@ -164,6 +164,9 @@ public class mainTest {
             Profit profit = new Profit();
             appendStrToFile("\n\t\tTraditional Profit: " + profit.getTraditionalProfit(traditionalIntersectPoint));
 
+            appendStrToFile("\n\t\t\t傳統成交量: " + traditionalIntersectPoint.getX());
+            appendStrToFile("\n\t\t\t傳統成交價: " + traditionalIntersectPoint.getY());
+
             profit.calculateModernProfit(modernBuyerDemand, shiftedSellerSupply);
             appendStrToFile("\n\n\t\tModern Profit: ");
             appendStrToFile(
